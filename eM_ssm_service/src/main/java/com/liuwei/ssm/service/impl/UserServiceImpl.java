@@ -78,4 +78,9 @@ public class UserServiceImpl implements UserService {
        password = bCryptPasswordEncoder.encode(password);
        userDao.modifyPsw(username,password);
     }
+
+    @Override
+    public UserInfo findById(String id) throws Exception{
+        return userDao.findById(id);
+    }
 }

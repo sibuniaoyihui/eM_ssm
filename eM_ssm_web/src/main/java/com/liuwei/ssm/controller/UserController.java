@@ -23,6 +23,18 @@ public class UserController {
     @Autowired
     private UserService userService;
 
+
+    //查询指定id的用户
+    @RequestMapping("/findById.do")
+    public ModelAndView findById(String id)throws Exception{
+
+        ModelAndView mv = new ModelAndView();
+        UserInfo userInfo = userService.findById(id);
+        mv.addObject("user",userInfo);
+        mv.setViewName("user-show");
+        return mv;
+    }
+
     @RequestMapping("/findAll.do")
     public ModelAndView findAll(@RequestParam(name = "page",required = true,defaultValue = "1")int page, @RequestParam(name = "pageSize",required = true,defaultValue = "5")int pageSize)throws Exception{
         List<UserInfo> users = userService.findAll(page,pageSize);

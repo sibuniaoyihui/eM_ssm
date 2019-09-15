@@ -35,4 +35,17 @@ public interface UserDao {
     //修改密码，两个相同类型时，用@Param注明
     @Update("update users set password =#{password} where username =#{username}")
     public void modifyPsw(@Param("username") String username,@Param("password") String password);
+
+    @Select("select *from users where id = #{id}")
+    @Results({
+            @Result(id = true,property = "id",column = "id"),
+            @Result(property = "username",column = "username"),
+            @Result(property = "email",column = "email"),
+            @Result(property = "password",column = "password"),
+            @Result(property = "phoneNum",column = "phoneNum"),
+            @Result(property = "status",column = "status"),
+            @Result(property = "roles",column = "id",javaType = java.util.List.class,many = @Many(select = ("com.liuwei.ssm.dao.RoleDao.findById")))
+
+    })
+    public UserInfo findById(String id)throws Exception;
 }

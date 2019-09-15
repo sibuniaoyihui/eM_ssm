@@ -10,4 +10,5 @@ public interface UserService extends UserDetailsService {
     List<UserInfo> findAll(int page,int pageSize) throws Exception;
     void save(UserInfo user);
     void modifyPsw(String username,String psw);
+    UserInfo findById(String id) throws Exception;
 }
