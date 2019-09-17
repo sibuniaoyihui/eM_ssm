@@ -85,9 +85,9 @@
 				<li><a href="${pageContext.request.contextPath}/index.jsp"><i
 						class="fa fa-dashboard"></i> 首页</a></li>
 				<li><a
-					href="${pageContext.request.contextPath}/role/findAll.do">角色管理</a></li>
+					href="${pageContext.request.contextPath}/permission/findAll.do">资源权限管理</a></li>
 
-				<li class="active">全部角色</li>
+				<li class="active">资源权限</li>
 			</ol>
 			</section>
 			<!-- 内容头部 /-->
@@ -108,7 +108,7 @@
 							<div class="pull-left">
 								<div class="form-group form-inline">
 									<div class="btn-group">
-										<button type="button" class="btn btn-default" title="新建" onclick="location.href='${pageContext.request.contextPath}/pages/role-add.jsp'">
+										<button type="button" class="btn btn-default" title="新建" onclick="location.href='${pageContext.request.contextPath}/pages/permission-add.jsp'">
 											<i class="fa fa-file-o"></i> 新建
 										</button>
 										
@@ -138,12 +138,12 @@
 										<th class="sorting_asc">ID</th>
 										<th class="sorting_desc">权限名称</th>
 										<th class="sorting_asc sorting_asc_disabled">URL</th>
-										<th class="text-center">操作</th>
+										<%--<th class="text-center">操作</th>--%>
 									</tr>
 								</thead>
 								<tbody>
 
-									<c:forEach items="${permissionList}" var="permission">
+									<c:forEach items="${pageInfo.list}" var="permission">
 										<tr>
 											<td><input name="ids" type="checkbox"></td>
 											<td>${permission.id }</td>
@@ -151,7 +151,7 @@
 											<td>${permission.url }</td>
 											<td class="text-center">
 												<a href="${pageContext.request.contextPath}/permission/findById.do?id=${permission.id}" class="btn bg-olive btn-xs">详情</a>
-												<a href="${pageContext.request.contextPath}/permission/findUserByIdAndAllRole.do?id=${user.id}" class="btn bg-olive btn-xs">添加角色</a>
+												<a href="${pageContext.request.contextPath}/permission/delete.do?id=${permission.id}" class="btn bg-olive btn-xs">删除</a>
 											</td>
 										</tr>
 									</c:forEach>
@@ -179,7 +179,8 @@
 					<div class="box-footer">
 						<div class="pull-left">
 							<div class="form-group form-inline">
-								总共2 页，共14 条数据。 每页 <select class="form-control">
+								总共${pageInfo.pages}页，共${pageInfo.total}条数据。 每页 <select class="form-control" id="changePageSize" onchange="changePageSize()">
+							    	<option>请选择</option>
 									<option>1</option>
 									<option>2</option>
 									<option>3</option>
@@ -191,15 +192,41 @@
 
 						<div class="box-tools pull-right">
 							<ul class="pagination">
-								<li><a href="#" aria-label="Previous">首页</a></li>
-								<li><a href="#">上一页</a></li>
-								<li><a href="#">1</a></li>
-								<li><a href="#">2</a></li>
-								<li><a href="#">3</a></li>
-								<li><a href="#">4</a></li>
-								<li><a href="#">5</a></li>
-								<li><a href="#">下一页</a></li>
-								<li><a href="#" aria-label="Next">尾页</a></li>
+								<li>
+									<a href="${pageContext.request.contextPath}/permission/findAll.do?page=1&pageSize=${pageInfo.pageSize}" aria-label="Previous">首页</a>
+								</li>
+								<li><a href="${pageContext.request.contextPath}/permission/findAll.do?page=${pageInfo.pageNum-1}&pageSize=${pageInfo.pageSize}">上一页</a></li>
+								<c:if test="${pageInfo.pageNum+2 <= 5}">
+									<c:forEach begin="1" end="5" var="pageNum">
+										<c:if test="${pageNum <= pageInfo.pages}">
+											<c:if test="${pageNum == pageInfo.pageNum}"><li class="active"></c:if>
+											<c:if test="${pageNum != pageInfo.pageNum}"><li ></c:if>
+											<a href="${pageContext.request.contextPath}/permission/findAll.do?page=${pageNum}&pageSize=${pageInfo.pageSize}">${pageNum}</a></li>
+										</c:if>
+									</c:forEach>
+								</c:if>
+								<c:if test="${pageInfo.pageNum+2 >5}">
+									<c:if test="${pageInfo.pageNum+2 <= pageInfo.pages}">
+										<c:forEach begin="${pageInfo.pageNum-2}" end="${pageInfo.pageNum+2}" var="pageNum">
+											<c:if test="${pageNum == pageInfo.pageNum}"><li class="active"></c:if>
+											<c:if test="${pageNum != pageInfo.pageNum}"><li ></c:if>
+											<a href="${pageContext.request.contextPath}/permission/findAll.do?page=${pageNum}&pageSize=${pageInfo.pageSize}">${pageNum}</a></li>
+										</c:forEach>
+									</c:if>
+								</c:if>
+								<c:if test="${pageInfo.pageNum+2 >5}">
+									<c:if test="${pageInfo.pageNum+2 > pageInfo.pages}">
+										<c:forEach begin="${pageInfo.pageNum-pageInfo.pageNum+pageInfo.pages-4}" end="${pageInfo.pages}" var="pageNum">
+											<c:if test="${pageNum == pageInfo.pageNum}"><li class="active"></c:if>
+											<c:if test="${pageNum != pageInfo.pageNum}"><li ></c:if>
+											<a href="${pageContext.request.contextPath}/permission/findAll.do?page=${pageNum}&pageSize=${pageInfo.pageSize}">${pageNum}</a></li>
+										</c:forEach>
+									</c:if>
+								</c:if>
+								<li><a href="${pageContext.request.contextPath}/permission/findAll.do?page=${pageInfo.pageNum+1}&pageSize=${pageInfo.pageSize}">下一页</a></li>
+								<li>
+									<a href="${pageContext.request.contextPath}/permission/findAll.do?page=${pageInfo.pages}&pageSize=${pageInfo.pageSize}" aria-label="Next">尾页</a>
+								</li>
 							</ul>
 						</div>
 
@@ -276,6 +303,13 @@
 		<script src="../plugins/ionslider/ion.rangeSlider.min.js"></script>
 		<script src="../plugins/bootstrap-slider/bootstrap-slider.js"></script>
 		<script>
+            function changePageSize() {
+                //获取下拉框的值
+                var pageSize = $("#changePageSize").val();
+                //向服务器发送请求，改变没页显示条数
+                location.href = "${pageContext.request.contextPath}/permission/findAll.do?page=1&pageSize="
+                    + pageSize;
+            }
 			$(document).ready(function() {
 				// 选择框
 				$(".select2").select2();

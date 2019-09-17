@@ -31,7 +31,7 @@
 
 			</a>
 				<ul class="treeview-menu">
-
+					<sec:authorize access="hasRole('ADMIN')">
 					<li id="system-setting"><a
 						href="${pageContext.request.contextPath}/user/findAll.do"> <i
 							class="fa fa-circle-o"></i> 用户管理
@@ -40,6 +40,7 @@
 						href="${pageContext.request.contextPath}/role/findAll.do"> <i
 							class="fa fa-circle-o"></i> 角色管理
 					</a></li>
+					</sec:authorize>
 					<li id="system-setting"><a
 						href="${pageContext.request.contextPath}/permission/findAll.do">
 							<i class="fa fa-circle-o"></i> 资源权限管理

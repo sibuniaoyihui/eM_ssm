@@ -1,6 +1,7 @@
 package com.liuwei.ssm.controller;
 
 import com.github.pagehelper.PageInfo;
+import com.liuwei.ssm.domain.Role;
 import com.liuwei.ssm.domain.UserInfo;
 import com.liuwei.ssm.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +37,7 @@ public class UserController {
     }
 
     @RequestMapping("/findAll.do")
-    public ModelAndView findAll(@RequestParam(name = "page",required = true,defaultValue = "1")int page, @RequestParam(name = "pageSize",required = true,defaultValue = "5")int pageSize)throws Exception{
+    public ModelAndView findAll(@RequestParam(name = "page",required = true,defaultValue = "1")Integer page, @RequestParam(name = "pageSize",required = true,defaultValue = "5")Integer pageSize)throws Exception{
         List<UserInfo> users = userService.findAll(page,pageSize);
         PageInfo pageInfo = new PageInfo(users);
         ModelAndView mv = new ModelAndView();
@@ -61,5 +62,25 @@ public class UserController {
         return "redirect:/logout.do";
     }
 
+    //查询用户，以及用户可以添加的角色
+    @RequestMapping("/findUserByIdAndAllRole.do")
+    public ModelAndView findUserByIdAndAllRole(@RequestParam(name = "id",required = true) String userId) throws Exception {
+        //根据用户id查询用户
+        UserInfo userInfo = userService.findById(userId);
+        //根据用户id查询可以添加的角色
+        List<Role> roles = userService.findOtherRoles(userId);
+        ModelAndView mv = new ModelAndView();
+        mv.addObject("user",userInfo);
+        mv.addObject("roleList",roles);
+        mv.setViewName("user-role-add");
+        return mv;
+    }
+   //给用户添加角色
+    @RequestMapping("/addRoleToUser.do")
+    public String addRoleToUser(@RequestParam(name = "userId",required = true) String userId,@RequestParam(name = "ids",required = true) String[] roleIds){
+
+        userService.addRoleToUser(userId,roleIds);
+        return "redirect:findAll.do";
+    }
 
 }

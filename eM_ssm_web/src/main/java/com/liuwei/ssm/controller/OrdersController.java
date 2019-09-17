@@ -39,7 +39,7 @@ public class OrdersController {
      * @throws Exception
      */
     @RequestMapping("/findAll.do")
-    public ModelAndView findAll(@RequestParam(name = "page",required = true,defaultValue = "1")int page,@RequestParam(name = "pageSize",required = true,defaultValue = "5")int pageSize) throws Exception {
+    public ModelAndView findAll(@RequestParam(name = "page",required = true,defaultValue = "1")Integer page,@RequestParam(name = "pageSize",required = true,defaultValue = "5")Integer pageSize) throws Exception {
         ModelAndView mv = new ModelAndView();
         List<Orders> all = ordersService.findAll(page,pageSize);
         //PageInfo就是一个分页Bean

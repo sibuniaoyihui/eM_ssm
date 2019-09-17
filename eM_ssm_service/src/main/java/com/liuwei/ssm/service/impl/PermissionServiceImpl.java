@@ -1,5 +1,6 @@
 package com.liuwei.ssm.service.impl;
 
+import com.github.pagehelper.PageHelper;
 import com.liuwei.ssm.dao.PermissionDao;
 import com.liuwei.ssm.domain.Permission;
 import com.liuwei.ssm.service.PermissionService;
@@ -17,7 +18,14 @@ public class PermissionServiceImpl implements PermissionService {
     private PermissionDao permissionDao;
 
     @Override
-    public List<Permission> findAll() throws Exception {
+    public List<Permission> findAll(int page,int pageSize) throws Exception {
+
+        PageHelper.startPage(page,pageSize);
         return permissionDao.findAll();
+    }
+
+    @Override
+    public void save(Permission permission) throws Exception {
+        permissionDao.save(permission);
     }
 }

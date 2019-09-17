@@ -1,5 +1,6 @@
 package com.liuwei.ssm.dao;
 
+import com.liuwei.ssm.domain.Role;
 import com.liuwei.ssm.domain.UserInfo;
 import org.apache.ibatis.annotations.*;
 import org.springframework.stereotype.Repository;
@@ -48,4 +49,10 @@ public interface UserDao {
 
     })
     public UserInfo findById(String id)throws Exception;
+
+    @Select("select *from role where id not in (select roleId from users_role where userId = #{userId})")
+    List<Role> findOtherRoles(String userId)throws Exception;
+
+    @Insert("insert into users_role(userId,roleId)values(#{userId},#{roleId})")
+    void addRoleToUser(@Param("userId") String userId,@Param("roleId") String roleId);
 }

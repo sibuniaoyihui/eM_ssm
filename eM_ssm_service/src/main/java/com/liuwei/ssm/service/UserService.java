@@ -1,5 +1,6 @@
 package com.liuwei.ssm.service;
 
+import com.liuwei.ssm.domain.Role;
 import com.liuwei.ssm.domain.UserInfo;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
@@ -11,4 +12,6 @@ public interface UserService extends UserDetailsService {
     void save(UserInfo user);
     void modifyPsw(String username,String psw);
     UserInfo findById(String id) throws Exception;
+    List<Role> findOtherRoles(String userId)throws Exception;
+    void addRoleToUser(String userId,String[] roleIds);
 }

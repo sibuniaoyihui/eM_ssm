@@ -1,6 +1,7 @@
 package com.liuwei.ssm.dao;
 
 import com.liuwei.ssm.domain.Permission;
+import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Select;
 import org.springframework.stereotype.Repository;
 
@@ -16,4 +17,7 @@ public interface PermissionDao {
 
     @Select("select *from permission")
     public List<Permission> findAll()throws Exception;
+
+    @Insert("insert into permission(permissionName,url)values(#{permissionName},#{url})")
+    public void save(Permission permission);
 }
